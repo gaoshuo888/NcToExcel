@@ -18,10 +18,15 @@ public class ExcelSummary {
              XSSFWorkbook summaryWorkbook = new XSSFWorkbook()) {
 
             // Create a new sheet for the summary
-            XSSFSheet summarySheet = summaryWorkbook.createSheet("C3 Summary");
+            XSSFSheet summarySheet = summaryWorkbook.createSheet("B2_C3_Summary");
+
+            // Set up the header for the summary sheet
+            String[] headers = {"Sheet Name", "B2", "C2", "B3", "C3"};
             Row headerRow = summarySheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Sheet Name");
-            headerRow.createCell(1).setCellValue("C3 Value");
+            for (int j = 0; j < headers.length; j++) {
+                headerRow.createCell(j).setCellValue(headers[j]);
+            }
+
 
             int summaryRowNum = 1;
 
@@ -29,18 +34,23 @@ public class ExcelSummary {
                 Sheet sheet = workbook.getSheetAt(i);
                 String sheetName = sheet.getSheetName();
 
-                // Get the value from cell C3 (row 2, column 2 - zero-indexed)
-                Row row = sheet.getRow(2);
-                if (row != null) {
-                    Cell cell = row.getCell(2);
-                    if (cell != null) {
-                        String cellValue = cell.toString();
+                // Get values from cells B2, C2, B3, C3
+                Row row2 = sheet.getRow(1); // Row 2 (zero-indexed)
+                Row row3 = sheet.getRow(2); // Row 3 (zero-indexed)
 
-                        // Add the sheet name and C3 value to the summary sheet
-                        Row summaryRow = summarySheet.createRow(summaryRowNum++);
-                        summaryRow.createCell(0).setCellValue(sheetName);
-                        summaryRow.createCell(1).setCellValue(cellValue);
-                    }
+                if (row2 != null && row3 != null) {
+                    Cell b2 = row2.getCell(1); // B2
+                    Cell c2 = row2.getCell(2); // C2
+                    Cell b3 = row3.getCell(1); // B3
+                    Cell c3 = row3.getCell(2); // C3
+
+                    // Create a new row in the summary sheet
+                    Row summaryRow = summarySheet.createRow(summaryRowNum++);
+                    summaryRow.createCell(0).setCellValue(sheetName);
+                    summaryRow.createCell(1).setCellValue(b2 != null ? b2.toString() : "");
+                    summaryRow.createCell(2).setCellValue(c2 != null ? c2.toString() : "");
+                    summaryRow.createCell(3).setCellValue(b3 != null ? b3.toString() : "");
+                    summaryRow.createCell(4).setCellValue(c3 != null ? c3.toString() : "");
                 }
             }
 
